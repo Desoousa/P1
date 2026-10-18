@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ardorin Ameijeiras Teucro - Pixel Roast Adventure</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="crt-overlay" id="crtOverlay"></div>
+    
+    <!-- HUD Superior -->
+    <header class="hud" id="hud">
+        <div class="hud-left">
+            <div class="lives" id="livesDisplay">❤️ ❤️ ❤️</div>
+            <div class="player-name">ARDORIN AMEIJEIRAS TEUCRO</div>
+        </div>
+        <div class="hud-center">
+            <div class="distance" id="distanceDisplay">📍 0m</div>
+            <div class="level" id="levelDisplay">⭐ NIVEL 1</div>
+        </div>
+        <div class="hud-right">
+            <div class="roasts" id="roastsDisplay">🤬 ROASTS: 0</div>
+            <div class="shame-meter" id="shameMeter">
+                <div class="shame-fill" id="shameFill"></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Canvas principal -->
+    <main class="game-container">
+        <canvas id="gameCanvas" width="1280" height="480"></canvas>
+        
+        <!-- Mensajes de roast flotantes -->
+        <div class="roast-bubble" id="roastBubble" aria-live="polite"></div>
+        
+        <!-- Indicador de controles -->
+        <div class="controls-hint" id="controlsHint">
+            <kbd>ESPACIO</kbd> / <kbd>↑</kbd> / <kbd>W</kbd> = SALTAR
+        </div>
+    </main>
+
+    <!-- Modal de Decisión -->
+    <div class="modal-overlay" id="decisionModal" role="dialog" aria-modal="true" aria-labelledby="decisionTitle">
+        <div class="modal-content decision-modal">
+            <h2 id="decisionTitle">🛤️ CRUCE DE CAMINOS</h2>
+            <p class="modal-text" id="decisionText">Ardorin Ameijeiras Teucro llega a una bifurcación. ¿Qué camino eliges?</p>
+            <div class="decision-options">
+                <button class="option-btn" id="optionA" data-choice="A">
+                    <span class="option-label">CAMINO A</span>
+                    <span class="option-desc" id="optionADesc">...</span>
+                </button>
+                <button class="option-btn" id="optionB" data-choice="B">
+                    <span class="option-label">CAMINO B</span>
+                    <span class="option-desc" id="optionBDesc">...</span>
+                </button>
+            </div>
+            <div class="modal-timer">
+                <div class="timer-bar" id="timerBar"></div>
+                <span id="timerText">10s</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Desafío -->
+    <div class="modal-overlay" id="challengeModal" role="dialog" aria-modal="true" aria-labelledby="challengeTitle">
+        <div class="modal-content challenge-modal">
+            <h2 id="challengeTitle">❓ DESAFÍO</h2>
+            <p class="modal-text" id="challengeText"></p>
+            
+            <!-- Tipos de input según desafío -->
+            <div class="challenge-input" id="challengeInput">
+                <!-- Múltiple choice -->
+                <div class="mc-options" id="mcOptions"></div>
+                
+                <!-- Input numérico -->
+                <input type="number" id="numberInput" class="pixel-input" placeholder="¿Resultado?" autocomplete="off">
+                
+                <!-- Click rápido -->
+                <button class="click-btn" id="clickBtn">¡CLICK AQUÍ!</button>
+                <div class="click-counter" id="clickCounter">0 / 20</div>
+                <div class="click-timer" id="clickTimer">3.0s</div>
+                
+                <!-- Memoria / Secuencia -->
+                <div class="sequence-display" id="sequenceDisplay"></div>
+                <div class="sequence-buttons" id="sequenceButtons"></div>
+            </div>
+            
+            <div class="challenge-feedback" id="challengeFeedback"></div>
+            <button class="action-btn" id="submitAnswer">ENVIAR</button>
+            <button class="action-btn secondary" id="giveUp">RENDIRSE (ROAST EXTRA)</button>
+        </div>
+    </div>
+
+    <!-- Modal Game Over -->
+    <div class="modal-overlay" id="gameOverModal" role="dialog" aria-modal="true" aria-labelledby="gameOverTitle">
+        <div class="modal-content game-over-modal">
+            <h2 id="gameOverTitle">☠️ GAME OVER</h2>
+            <p class="modal-text" id="gameOverText"></p>
+            <div class="final-stats" id="finalStats"></div>
+            <button class="action-btn" id="restartBtn">🔄 REINTENTAR</button>
+        </div>
+    </div>
+
+    <!-- Modal Victoria -->
+    <div class="modal-overlay" id="victoryModal" role="dialog" aria-modal="true" aria-labelledby="victoryTitle">
+        <div class="modal-content victory-modal">
+            <h2 id="victoryTitle">🏆 ¡VICTORIA!</h2>
+            <p class="modal-text" id="victoryText"></p>
+            <div class="final-stats" id="victoryStats"></div>
+            <button class="action-btn" id="playAgainBtn">🎮 JUGAR OTRA VEZ</button>
+        </div>
+    </div>
+
+    <!-- Pantalla de inicio -->
+    <div class="start-screen" id="startScreen">
+        <div class="start-content">
+            <h1 class="game-title">ARDORIN AMEIJEIRAS TEUCRO</h1>
+            <p class="game-subtitle">PIXEL ROAST ADVENTURE</p>
+            <div class="sprite-preview" id="spritePreview"></div>
+            <p class="start-description">
+                Un platformer donde el mapa te traiciona,<br>
+                los desafíos te humillan y los roasts duelen.
+            </p>
+            <button class="action-btn big" id="startBtn">🚀 COMENZAR AVENTURA</button>
+            <div class="credits">
+                Controles: <kbd>ESPACIO</kbd> <kbd>↑</kbd> <kbd>W</kbd> = Saltar | <kbd>1</kbd>/<kbd>2</kbd> = Opciones rápidas
+            </div>
+        </div>
+    </div>
+
+    <script src="sprites.js"></script>
+    <script src="challenges.js"></script>
+    <script src="roasts.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
