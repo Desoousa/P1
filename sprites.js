@@ -552,6 +552,559 @@ const SpriteSheet = {
         return canvas;
     },
 
+    // ========================================
+    // LoL CHAMPIONS - Sprites pixel art 64x64
+    // ========================================
+    generateLoLChampion(championId, scale = 1) {
+        const key = `lol_${championId}_${scale}`;
+        if (this.cache.has(key)) return this.cache.get(key);
+
+        const baseSize = 64;
+        const size = baseSize * scale;
+        const canvas = this.getCanvas(size, size);
+        const ctx = canvas.getContext('2d');
+        ctx.imageSmoothingEnabled = false;
+        ctx.scale(scale, scale);
+
+        // Definir datos de cada campeón
+        const champions = {
+            ahri: { colors: { primary: '#E8B4E8', secondary: '#FFD700', skin: '#FFE4C4', eyes: '#00FFFF', outfit: '#8B008B', accent: '#FF69B4' }, draw: this.drawAhri.bind(this) },
+            jinx: { colors: { primary: '#00FFFF', secondary: '#FF1493', skin: '#FFE4C4', eyes: '#FF1493', outfit: '#1A1A2E', accent: '#FFD700' }, draw: this.drawJinx.bind(this) },
+            yasuo: { colors: { primary: '#FFFFFF', secondary: '#FFD700', skin: '#D4B896', eyes: '#000000', outfit: '#2D2D2D', accent: '#FF4444' }, draw: this.drawYasuo.bind(this) },
+            lux: { colors: { primary: '#FFD700', secondary: '#FFFFFF', skin: '#FFE4C4', eyes: '#00BFFF', outfit: '#4169E1', accent: '#FFD700' }, draw: this.drawLux.bind(this) },
+            thresh: { colors: { primary: '#1A1A2E', secondary: '#00FFFF', skin: '#0D0D1A', eyes: '#00FFFF', outfit: '#2D1B1B', accent: '#FFD700' }, draw: this.drawThresh.bind(this) },
+            garen: { colors: { primary: '#C0C0C0', secondary: '#FFD700', skin: '#D4B896', eyes: '#0000FF', outfit: '#C0C0C0', accent: '#000080' }, draw: this.drawGaren.bind(this) },
+            miss_fortune: { colors: { primary: '#FF4444', secondary: '#FFD700', skin: '#FFE4C4', eyes: '#00FFFF', outfit: '#8B0000', accent: '#000000' }, draw: this.drawMissFortune.bind(this) },
+            zed: { colors: { primary: '#1A1A1A', secondary: '#FF3333', skin: '#2D2D2D', eyes: '#FF3333', outfit: '#1A1A1A', accent: '#444444' }, draw: this.drawZed.bind(this) },
+            jhin: { colors: { primary: '#FFFFFF', secondary: '#FFD700', skin: '#1A1A1A', eyes: '#FF3333', outfit: '#1A1A1A', accent: '#FFD700' }, draw: this.drawJhin.bind(this) },
+            vi: { colors: { primary: '#FF69B4', secondary: '#FFD700', skin: '#FFE4C4', eyes: '#FFD700', outfit: '#1A1A2E', accent: '#00FFFF' }, draw: this.drawVi.bind(this) },
+            teemo: { colors: { primary: '#8FBC8F', secondary: '#FFD700', skin: '#8FBC8F', eyes: '#FFD700', outfit: '#228B22', accent: '#FF4444' }, draw: this.drawTeemo.bind(this) },
+            darius: { colors: { primary: '#8B0000', secondary: '#C0C0C0', skin: '#D4B896', eyes: '#FF0000', outfit: '#8B0000', accent: '#FFD700' }, draw: this.drawDarius.bind(this) },
+            soraka: { colors: { primary: '#E6E6FA', secondary: '#FFD700', skin: '#E6E6FA', eyes: '#00FFFF', outfit: '#9370DB', accent: '#FFFFFF' }, draw: this.drawSoraka.bind(this) },
+            rengar: { colors: { primary: '#FFA500', secondary: '#FFFFFF', skin: '#FF8C00', eyes: '#FFD700', outfit: '#8B4513', accent: '#FF0000' }, draw: this.drawRengar.bind(this) },
+            leona: { colors: { primary: '#FFD700', secondary: '#FF4444', skin: '#FFE4C4', eyes: '#FFD700', outfit: '#FFD700', accent: '#FF8C00' }, draw: this.drawLeona.bind(this) }
+        };
+
+        const champ = champions[championId];
+        if (!champ) return this.generateLoLChampion('ahri', scale); // Fallback
+
+        const c = champ.colors;
+        const px = (x, y, color) => {
+            ctx.fillStyle = color;
+            ctx.fillRect(x, y, 1, 1);
+        };
+        const rect = (x, y, w, h, color) => {
+            ctx.fillStyle = color;
+            ctx.fillRect(x, y, w, h);
+        };
+
+        // Llamar a la función de dibujo específica
+        champ.draw(ctx, c, px, rect);
+
+        this.cache.set(key, canvas);
+        return canvas;
+    },
+
+    // Generar versión "zoom/crop" para el quiz
+    generateLoLChampionCrop(championId, cropRegion = null, scale = 1) {
+        const fullSprite = this.generateLoLChampion(championId, scale);
+        const baseSize = 64 * scale;
+        
+        // Si no se especifica región, elegir una aleatoria interesante
+        if (!cropRegion) {
+            const regions = [
+                { x: 16, y: 8, w: 32, h: 32, name: 'cara' },      // Cara
+                { x: 8, y: 20, w: 24, h: 24, name: 'ojo' },       // Ojo
+                { x: 20, y: 35, w: 24, h: 20, name: 'arma' },     // Arma/mano
+                { x: 12, y: 5, w: 40, h: 20, name: 'pelo' },      // Pelo/cabeza
+                { x: 24, y: 45, w: 16, h: 16, name: 'detalle' },  // Detalle único
+            ];
+            cropRegion = regions[Math.floor(Math.random() * regions.length)];
+        }
+
+        const cropCanvas = this.getCanvas(cropRegion.w * scale, cropRegion.h * scale);
+        const cropCtx = cropCanvas.getContext('2d');
+        cropCtx.imageSmoothingEnabled = false;
+        cropCtx.scale(scale, scale);
+        cropCtx.drawImage(fullSprite, cropRegion.x, cropRegion.y, cropRegion.w, cropRegion.h, 0, 0, cropRegion.w, cropRegion.h);
+
+        return { canvas: cropCanvas, region: cropRegion };
+    },
+
+    // ========================================
+    // FUNCIONES DE DIBUJO POR CAMPEÓN
+    // ========================================
+    drawAhri(ctx, c, px, rect) {
+        // Pelo y orejas de zorro
+        for (let y = 5; y < 18; y++) {
+            for (let x = 14; x < 50; x++) {
+                if (y < 10 && (x < 18 || x > 46)) continue; // Huecos orejas
+                px(x, y, c.primary);
+            }
+        }
+        // Orejas
+        for (let y = 2; y < 10; y++) {
+            const w = 6 - (y - 2);
+            for (let x = 0; x < w; x++) {
+                px(16 + x, y, c.primary);
+                px(42 - x, y, c.primary);
+            }
+            // Punta blanca
+            if (y === 3) { px(16, y, c.secondary); px(47, y, c.secondary); }
+        }
+        // Colas (sugeridas atrás)
+        for (let i = 0; i < 9; i++) {
+            const tx = 8 + (i % 3) * 16;
+            const ty = 50 + Math.floor(i / 3) * 4;
+            px(tx, ty, c.secondary);
+            px(tx + 1, ty, c.secondary);
+        }
+        // Cara
+        for (let y = 18; y < 35; y++) {
+            for (let x = 18; x < 46; y++) {
+                px(x, y, c.skin);
+            }
+        }
+        // Ojos
+        rect(24, 24, 4, 4, c.eyes);
+        rect(36, 24, 4, 4, c.eyes);
+        px(26, 25, '#FFFFFF'); px(38, 25, '#FFFFFF'); // Brillo
+        // Orbita
+        for (let i = 0; i < 6; i++) {
+            px(31 + i, 16, c.accent);
+        }
+        // Ropa
+        rect(16, 35, 32, 25, c.outfit);
+    },
+
+    drawJinx(ctx, c, px, rect) {
+        // Pelo azul loco (dos coletas)
+        for (let y = 2; y < 20; y++) {
+            for (let x = 18; x < 46; x++) {
+                if ((x < 28 && y < 10) || (x > 36 && y < 10)) continue; // Separación coletas
+                px(x, y, c.primary);
+            }
+        }
+        // Coletas
+        for (let y = 20; y < 50; y++) {
+            // Coleta izq
+            for (let x = 18; x < 28; x++) px(x, y, c.primary);
+            // Coleta der
+            for (let x = 36; x < 46; x++) px(x, y, c.primary);
+        }
+        // Cara
+        rect(20, 18, 24, 15, c.skin);
+        // Ojos locos (diferentes)
+        rect(24, 22, 4, 5, c.eyes);
+        rect(36, 22, 5, 4, c.eyes);
+        px(25, 23, '#FFFFFF'); px(38, 23, '#FFFFFF');
+        // Dientes
+        px(30, 30, c.accent); px(31, 30, c.accent); px(32, 30, c.accent);
+        // Cohete (brazo der)
+        rect(46, 25, 12, 6, c.outfit);
+        rect(50, 27, 8, 4, c.secondary);
+        // Ropa
+        rect(16, 35, 32, 25, c.outfit);
+    },
+
+    drawYasuo(ctx, c, px, rect) {
+        // Pelo blanco al viento
+        for (let y = 5; y < 20; y++) {
+            const offset = Math.sin(y * 0.3) * 4;
+            for (let x = 18 + offset; x < 46 + offset; x++) {
+                if (x >= 18 && x < 46) px(x, y, c.primary);
+            }
+        }
+        // Cinturón
+        rect(18, 32, 28, 2, c.secondary);
+        // Espada (katana)
+        for (let y = 15; y < 55; y++) {
+            px(48, y, c.secondary);
+            px(49, y, '#FFFFFF');
+        }
+        // Guardamanos
+        rect(46, 14, 4, 2, c.accent);
+        // Cara
+        rect(20, 18, 24, 15, c.skin);
+        // Cicatriz
+        for (let x = 28; x < 36; x++) px(x, 24, c.accent);
+        // Ojos cerrados/serios
+        rect(24, 24, 4, 1, c.eyes);
+        rect(36, 24, 4, 1, c.eyes);
+        // Ropa
+        rect(16, 35, 32, 25, c.outfit);
+    },
+
+    drawLux(ctx, c, px, rect) {
+        // Pelo dorado con coleta
+        for (let y = 5; y < 18; y++) {
+            for (let x = 18; x < 46; x++) px(x, y, c.primary);
+        }
+        // Coleta
+        for (let y = 18; y < 40; y++) {
+            for (let x = 40; x < 48; x++) px(x, y, c.primary);
+        }
+        // Luz/bastón
+        for (let y = 10; y < 50; y++) {
+            const w = 2 + Math.sin(y * 0.2) * 1;
+            for (let x = 0; x < w; x++) {
+                px(10 + x, y, c.secondary);
+            }
+        }
+        // Cara
+        rect(20, 18, 24, 15, c.skin);
+        // Ojos azules brillantes
+        rect(24, 24, 4, 4, c.eyes);
+        rect(36, 24, 4, 4, c.eyes);
+        px(26, 25, '#FFFFFF'); px(38, 25, '#FFFFFF');
+        // Armadura
+        rect(16, 35, 32, 25, c.outfit);
+        // Detalles dorados
+        rect(20, 36, 24, 1, c.accent);
+    },
+
+    drawThresh(ctx, c, px, rect) {
+        // Calavera/cabeza
+        rect(20, 10, 24, 20, c.primary);
+        // Ojos huecos brillantes
+        rect(24, 16, 4, 6, c.eyes);
+        rect(36, 16, 4, 6, c.eyes);
+        // Mandíbula
+        rect(24, 28, 16, 2, c.primary);
+        // Cadenas
+        for (let y = 30; y < 55; y += 4) {
+            rect(12, y, 4, 2, c.secondary);
+            rect(48, y, 4, 2, c.secondary);
+        }
+        // Lintern
+        rect(50, 20, 8, 12, c.secondary);
+        rect(51, 22, 6, 8, c.accent);
+        // Humo
+        for (let i = 0; i < 10; i++) {
+            px(10 + Math.random() * 44, 5 + Math.random() * 20, c.secondary);
+        }
+    },
+
+    drawGaren(ctx, c, px, rect) {
+        // Casco
+        rect(18, 5, 28, 15, c.primary);
+        rect(20, 3, 24, 4, c.accent); // Pluma
+        // Visera
+        rect(22, 12, 20, 3, c.eyes);
+        // Hombreras
+        rect(10, 20, 44, 8, c.primary);
+        rect(12, 20, 40, 2, c.secondary);
+        // Espada gigante
+        for (let y = 25; y < 55; y++) {
+            const w = y < 35 ? 6 : 4;
+            for (let x = 0; x < w; x++) {
+                px(50 + x, y, c.secondary);
+            }
+        }
+        // Detalle hoja
+        for (let y = 25; y < 50; y++) px(52, y, '#FFFFFF');
+        // Capa
+        for (let y = 20; y < 50; y++) {
+            for (let x = 0; x < 12; x++) {
+                px(6 + x, y, c.accent);
+            }
+        }
+        // Armadura cuerpo
+        rect(18, 28, 28, 32, c.primary);
+        rect(22, 30, 20, 2, c.secondary);
+    },
+
+    drawMissFortune(ctx, c, px, rect) {
+        // Sombrero
+        rect(14, 2, 36, 6, c.accent);
+        rect(18, 0, 28, 4, c.accent);
+        rect(22, -2, 20, 2, c.secondary); // Pluma
+        // Pelo rojo
+        for (let y = 8; y < 22; y++) {
+            for (let x = 16; x < 48; x++) px(x, y, c.primary);
+        }
+        // Coleta lateral
+        for (let y = 22; y < 45; y++) {
+            for (let x = 44; x < 52; x++) px(x, y, c.primary);
+        }
+        // Cara
+        rect(20, 18, 24, 15, c.skin);
+        // Ojos
+        rect(24, 24, 4, 4, c.eyes);
+        rect(36, 24, 4, 4, c.eyes);
+        // Pistolas (ambas manos)
+        rect(6, 30, 10, 4, c.secondary); // Izq
+        rect(48, 30, 10, 4, c.secondary); // Der
+        rect(8, 31, 6, 2, c.outfit); // Cañón
+        rect(50, 31, 6, 2, c.outfit);
+        // Ropa
+        rect(16, 35, 32, 25, c.outfit);
+        rect(20, 35, 24, 2, c.secondary); // Cinturón
+    },
+
+    drawZed(ctx, c, px, rect) {
+        // Máscara
+        rect(16, 6, 32, 18, c.primary);
+        // Ojos de la máscara
+        rect(22, 10, 6, 6, c.eyes);
+        rect(36, 10, 6, 6, c.eyes);
+        // Shurikens en la espalda
+        for (let i = 0; i < 3; i++) {
+            const x = 48 + i * 4;
+            const y = 15 + i * 6;
+            rect(x, y, 4, 4, c.accent);
+            px(x + 1, y + 1, c.secondary);
+        }
+        // Traje
+        rect(16, 25, 32, 35, c.outfit);
+        // Guantes
+        rect(12, 35, 6, 15, c.primary);
+        rect(46, 35, 6, 15, c.primary);
+        // Energía sombra
+        for (let i = 0; i < 8; i++) {
+            px(8 + Math.random() * 48, 25 + Math.random() * 30, c.secondary);
+        }
+    },
+
+    drawJhin(ctx, c, px, rect) {
+        // Máscara blanca
+        rect(18, 6, 28, 18, c.primary);
+        // Ojo de la máscara (único visible)
+        rect(28, 10, 8, 8, c.eyes);
+        px(31, 12, '#FFFFFF');
+        // Rosa en la máscara
+        rect(20, 18, 4, 4, '#FF69B4');
+        // Rifle
+        for (let x = 48; x < 62; x++) {
+            for (let y = 20; y < 28; y++) {
+                if (y === 23 || y === 24) px(x, y, c.secondary);
+                else if (x > 50) px(x, y, c.outfit);
+            }
+        }
+        // Guantes blancos
+        rect(14, 35, 6, 10, c.primary);
+        rect(44, 35, 6, 10, c.primary);
+        // Traje
+        rect(16, 25, 32, 35, c.outfit);
+        // Detalles dorados
+        rect(24, 28, 16, 1, c.accent);
+    },
+
+    drawVi(ctx, c, px, rect) {
+        // Pelo rosa corto
+        for (let y = 6; y < 18; y++) {
+            for (let x = 16; x < 48; x++) px(x, y, c.primary);
+        }
+        // Gafas
+        rect(20, 12, 10, 6, c.accent);
+        rect(34, 12, 10, 6, c.accent);
+        rect(28, 13, 8, 4, '#000000'); // Puente
+        // Cara
+        rect(20, 18, 24, 15, c.skin);
+        // Ojos
+        rect(24, 24, 4, 4, c.eyes);
+        rect(36, 24, 4, 4, c.eyes);
+        // Guantes Hextech (GRANDES)
+        rect(8, 30, 18, 20, c.secondary);
+        rect(38, 30, 18, 20, c.secondary);
+        // Detalles hextech
+        for (let y = 32; y < 48; y += 4) {
+            rect(10, y, 14, 2, c.accent);
+            rect(40, y, 14, 2, c.accent);
+        }
+        // Tatuaje "VI" en mejilla
+        px(44, 20, c.accent); px(45, 20, c.accent);
+        px(44, 21, c.accent); px(45, 22, c.accent);
+        // Traje
+        rect(16, 35, 32, 25, c.outfit);
+    },
+
+    drawTeemo(ctx, c, px, rect) {
+        // Sombrero
+        rect(18, 0, 28, 6, c.outfit);
+        rect(14, 2, 36, 4, c.outfit);
+        // Orejas
+        for (let y = 6; y < 14; y++) {
+            for (let x = 0; x < 4; x++) px(14 + x, y, c.primary);
+            for (let x = 0; x < 4; x++) px(46 - x, y, c.primary);
+        }
+        // Cara (pequeña)
+        rect(22, 14, 20, 12, c.skin);
+        // Ojos grandes
+        rect(26, 18, 4, 4, c.eyes);
+        rect(34, 18, 4, 4, c.eyes);
+        px(27, 19, '#FFFFFF'); px(35, 19, '#FFFFFF');
+        // Pistola
+        rect(48, 25, 12, 4, c.secondary);
+        // Cuerpo
+        rect(16, 28, 32, 30, c.outfit);
+        // Hongos en el suelo
+        for (let i = 0; i < 3; i++) {
+            const mx = 10 + i * 20;
+            rect(mx, 55, 8, 4, c.accent);
+            rect(mx + 2, 52, 4, 4, '#8FBC8F');
+        }
+    },
+
+    drawDarius(ctx, c, px, rect) {
+        // Casco con cuernos
+        rect(20, 2, 24, 12, c.primary);
+        // Cuernos
+        for (let y = 0; y < 8; y++) {
+            const w = 3 - Math.floor(y / 3);
+            for (let x = 0; x < w; x++) {
+                px(22 + x, y, c.primary);
+                px(39 - x, y, c.primary);
+            }
+        }
+        // Cara
+        rect(20, 14, 24, 12, c.skin);
+        // Barba
+        for (let y = 24; y < 30; y++) {
+            for (let x = 22; x < 42; x++) {
+                if (Math.random() > 0.3) px(x, y, '#4A3728');
+            }
+        }
+        // Ojos rojos
+        rect(24, 18, 4, 3, c.eyes);
+        rect(36, 18, 4, 3, c.eyes);
+        // Hacha ENORME
+        // Mango
+        for (let y = 15; y < 55; y++) px(50, y, '#8B4513');
+        // Hoja
+        for (let y = 15; y < 35; y++) {
+            const w = 12 - Math.floor((y - 15) / 2);
+            for (let x = 0; x < w; x++) {
+                px(48 - x, y, c.secondary);
+            }
+        }
+        // Filo
+        for (let y = 15; y < 35; y++) px(48 - (12 - Math.floor((y - 15) / 2)), y, '#FFFFFF');
+        // Armadura
+        rect(16, 30, 32, 30, c.primary);
+        rect(18, 32, 28, 2, c.accent);
+        // Capa
+        for (let y = 30; y < 55; y++) {
+            for (let x = 0; x < 8; x++) {
+                px(8 + x, y, c.accent);
+            }
+        }
+    },
+
+    drawSoraka(ctx, c, px, rect) {
+        // Cuerno central
+        for (let y = 0; y < 15; y++) {
+            const w = 3 - Math.floor(y / 5);
+            for (let x = 0; x < w; x++) {
+                px(31 + x, y, c.secondary);
+            }
+        }
+        // Pelo lavanda
+        for (let y = 8; y < 22; y++) {
+            for (let x = 16; x < 48; x++) px(x, y, c.primary);
+        }
+        // Cola (sugerida)
+        for (let y = 40; y < 55; y++) {
+            px(50, y, c.primary);
+            px(51, y, c.primary);
+        }
+        // Cara
+        rect(20, 18, 24, 15, c.skin);
+        // Ojos
+        rect(24, 24, 4, 4, c.eyes);
+        rect(36, 24, 4, 4, c.eyes);
+        // Bastón con estrella
+        for (let y = 10; y < 50; y++) px(10, y, c.secondary);
+        // Estrella en el bastón
+        for (let i = -2; i <= 2; i++) {
+            px(10, 12 + i, c.accent);
+            px(8 + i, 12, c.accent);
+        }
+        // Ropa
+        rect(16, 35, 32, 25, c.outfit);
+        // Pezuñas (pies)
+        rect(20, 55, 10, 5, c.secondary);
+        rect(34, 55, 10, 5, c.secondary);
+    },
+
+    drawRengar(ctx, c, px, rect) {
+        // Melena
+        for (let y = 2; y < 20; y++) {
+            for (let x = 10; x < 54; x++) {
+                if (y < 8 && (x < 18 || x > 46)) continue; // Orejas
+                px(x, y, c.primary);
+            }
+        }
+        // Orejas gato
+        for (let y = 0; y < 8; y++) {
+            const w = 5 - Math.floor(y / 2);
+            for (let x = 0; x < w; x++) {
+                px(16 + x, y, c.primary);
+                px(43 - x, y, c.primary);
+            }
+        }
+        // Cara
+        rect(20, 18, 24, 15, c.skin);
+        // Ojos depredadores
+        rect(24, 22, 4, 5, c.eyes);
+        rect(36, 22, 4, 5, c.eyes);
+        // Cicatrices
+        for (let i = 0; i < 3; i++) {
+            const x = 22 + i * 8;
+            for (let y = 0; y < 3; y++) px(x, 20 + y, c.accent);
+        }
+        // Garra (mano der)
+        for (let i = 0; i < 4; i++) {
+            px(50 + i, 30 + i, c.secondary);
+            px(50 + i, 31 + i, c.secondary);
+            px(50 + i, 32 + i, c.secondary);
+        }
+        // Armadura cuero
+        rect(16, 35, 32, 25, c.outfit);
+    },
+
+    drawLeona(ctx, c, px, rect) {
+        // Casco solar
+        rect(18, 2, 28, 12, c.primary);
+        // Rayos solares
+        for (let i = 0; i < 8; i++) {
+            const angle = (i / 8) * Math.PI * 2;
+            for (let r = 14; r < 22; r++) {
+                const x = 32 + Math.cos(angle) * r;
+                const y = 8 + Math.sin(angle) * r;
+                if (x >= 0 && x < 64 && y >= 0 && y < 64) px(Math.floor(x), Math.floor(y), c.accent);
+            }
+        }
+        // Visera
+        rect(22, 6, 20, 4, c.eyes);
+        // Armadura dorada completa
+        rect(14, 20, 36, 40, c.primary);
+        // Detalles
+        rect(20, 22, 24, 2, c.secondary); // Pecho
+        rect(20, 30, 24, 1, c.secondary);
+        rect(20, 38, 24, 1, c.secondary);
+        // Escudo solar (brazo izq)
+        rect(4, 25, 14, 20, c.primary);
+        for (let r = 0; r < 10; r++) {
+            for (let a = 0; a < 360; a += 45) {
+                const x = 11 + Math.cos(a * Math.PI / 180) * r;
+                const y = 35 + Math.sin(a * Math.PI / 180) * r;
+                if (x >= 4 && x < 18 && y >= 25 && y < 45) px(Math.floor(x), Math.floor(y), c.accent);
+            }
+        }
+        // Espada (brazo der)
+        for (let y = 25; y < 50; y++) {
+            px(50, y, c.secondary);
+            px(51, y, '#FFFFFF');
+        }
+        // Capa
+        for (let y = 20; y < 50; y++) {
+            for (let x = 0; x < 10; x++) {
+                px(4 + x, y, c.secondary);
+            }
+        }
+    },
+
     // Limpiar cache
     clear() {
         this.cache.clear();

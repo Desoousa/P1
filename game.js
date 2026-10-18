@@ -958,11 +958,23 @@ const Game = {
     // ========================================
     // SISTEMA DE DESAFÍOS
     // ========================================
+    // ESTADO DE DESAFÍOS
+    // ========================================
     currentChallenge: null,
+    firstChallengeDone: false, // Para forzar el quiz LoL al inicio
     clickerState: { count: 0, startTime: 0, active: false },
     memoryState: { sequence: [], showing: false, playerInput: [], currentStep: 0 },
+    lolChallengeState: { championId: null, cropData: null, options: [], correctIndex: 0 },
 
     startChallenge(challenge) {
+        // Si es el primer desafío y no es LoL, forzar LoL
+        if (!this.firstChallengeDone && challenge.challengeType !== 'lolChampion') {
+            challenge = ChallengesDB.generateLoLChallenge('mix');
+            this.firstChallengeDone = true;
+        } else if (!this.firstChallengeDone && challenge.challengeType === 'lolChampion') {
+            this.firstChallengeDone = true;
+        }
+        
         this.currentChallenge = challenge;
         this.state.paused = true;
         
@@ -996,6 +1008,9 @@ const Game = {
                 this.dom.numberInput.placeholder = 'Escribe tu respuesta...';
                 this.dom.numberInput.value = '';
                 this.dom.numberInput.focus();
+                break;
+            case 'lolChampion':
+                this.startLoLChampionChallenge(challenge);
                 break;
         }
         
@@ -1173,13 +1188,92 @@ const Game = {
         }
     },
 
-    submitChallengeAnswer() {
+    // ========================================
+    // LoL CHAMPION CHALLENGE
+    // ========================================
+    startLoLChampionChallenge(challenge) {
+        const champ = challenge.championData;
+        this.lolChallengeState.championId = champ.id;
+        this.lolChallengeState.options = challenge.options;
+        this.lolChallengeState.correctIndex = challenge.answerIndex;
+        
+        // Generar crop aleatorio
+        const cropResult = SpriteSheet.generateLoLChampionCrop(champ.id);
+        this.lolChallengeState.cropData = cropResult;
+        
+        // Mostrar imagen del crop
+        this.showLoLChampionCrop(cropResult.canvas);
+        
+        // Mostrar opciones múltiples
+        this.showMCChallenge(challenge);
+        
+        // Texto adicional con pista
+        this.dom.challengeText.textContent = `${challenge.question} (${champ.title})`;
+    },
+
+    showLoLChampionCrop(canvas) {
+        // Crear o usar contenedor para la imagen
+        let imgContainer = document.getElementById('lolChampionCrop');
+        if (!imgContainer) {
+            imgContainer = document.createElement('div');
+            imgContainer.id = 'lolChampionCrop';
+            imgContainer.className = 'lol-champion-crop';
+            imgContainer.style.cssText = `
+                width: 128px;
+                height: 128px;
+                margin: 16px auto;
+                image-rendering: pixelated;
+                image-rendering: crisp-edges;
+                border: 4px solid var(--pixel-gold);
+                background: var(--pixel-black);
+                border-radius: 8px;
+                box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+                animation: cropPulse 2s ease-in-out infinite;
+            `;
+            // Insertar antes de las opciones
+            this.dom.mcOptions.parentNode.insertBefore(imgContainer, this.dom.mcOptions);
+        }
+        
+        // Convertir canvas a data URL y mostrar
+        const dataUrl = canvas.toDataURL('image/png');
+        imgContainer.innerHTML = `<img src="${dataUrl}" style="width:100%;height:100%;image-rendering:pixelated;" alt="Detalle del campeón">`;
+        
+        // Añadir estilo de animación si no existe
+        if (!document.getElementById('lolCropStyle')) {
+            const style = document.createElement('style');
+            style.id = 'lolCropStyle';
+            style.textContent = `
+                @keyframes cropPulse {
+                    0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); border-color: var(--pixel-gold); }
+                    50% { box-shadow: 0 0 30px rgba(0, 255, 255, 0.5); border-color: var(--pixel-blue); }
+                }
+                .lol-champion-crop img { display: block; }
+            `;
+            document.head.appendChild(style);
+        }
+    },
+
+    hideAllChallengeInputs() {
+        this.dom.mcOptions.style.display = 'none';
+        this.dom.mcOptions.innerHTML = '';
+        this.dom.numberInput.style.display = 'none';
+        this.dom.clickBtn.style.display = 'none';
+        this.dom.clickCounter.style.display = 'none';
+        this.dom.clickTimer.style.display = 'none';
+        this.dom.sequenceDisplay.style.display = 'none';
+        this.dom.sequenceButtons.style.display = 'none';
+        
+        // Ocultar imagen LoL si existe
+        const imgContainer = document.getElementById('lolChampionCrop');
+        if (imgContainer) imgContainer.style.display = 'none';
+    },
         if (!this.currentChallenge) return;
         
         let answer, success = false;
         
         switch (this.currentChallenge.challengeType) {
             case 'trivia':
+            case 'lolChampion':
                 answer = this.selectedMCAnswer;
                 success = answer !== undefined && ChallengesDB.checkAnswer(this.currentChallenge, answer);
                 break;
@@ -1196,12 +1290,12 @@ const Game = {
                 break;
         }
         
-        if (this.currentChallenge.challengeType === 'trivia' && this.selectedMCAnswer === undefined) {
+        if ((this.currentChallenge.challengeType === 'trivia' || this.currentChallenge.challengeType === 'lolChampion') && this.selectedMCAnswer === undefined) {
             this.showChallengeFeedback('¡Selecciona una opción!', false);
             return;
         }
         
-        if (this.currentChallenge.challengeType !== 'trivia' && (answer === undefined || isNaN(answer) || answer === '')) {
+        if (this.currentChallenge.challengeType !== 'trivia' && this.currentChallenge.challengeType !== 'lolChampion' && (answer === undefined || isNaN(answer) || answer === '')) {
             this.showChallengeFeedback('¡Escribe una respuesta!', false);
             return;
         }

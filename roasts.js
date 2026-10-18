@@ -77,6 +77,19 @@ const RoastsDB = {
         "¿Matemáticas? Pensé que esto era un platformer 🏃"
     ],
 
+    lolChampion: [
+        "¿Quiz de LoL? Ardorin, tu main es 'Teclado' y tu elo 'Madera' ⌨️🪵",
+        "Esa era Ahri, no 'la chica de las colas'... básico 🦊",
+        "Ardorin Ameijeiras Teucro: Experto en '¿Quién es ese?' 🤷‍♂️",
+        "Fallar a Jinx... ¿también fallas las skillshots en game? 🚀",
+        "Tu conocimiento de LoL está en el mismo elo que tu mecánica: Hierro IV ⚔️",
+        "Ese campeón tenía 4 skins. Tú 0 aciertos. Coherente 🎨",
+        "Riot debería banearte por crímenes contra el lore 📜",
+        "Ardorin, hasta un bot de Co-op vs IA lo habría acertado 🤖",
+        "Tu 'main' es 'Fill' y tu champion pool: 'Ninguno' 🚫",
+        "¿Eso era Zed o una sombra? Tú: 'Un ninja genérico' 🥷"
+    ],
+
     // ========================================
     // ROASTS POR OBSTÁCULOS TROLL
     // ========================================

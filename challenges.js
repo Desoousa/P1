@@ -243,15 +243,262 @@ const ChallengesDB = {
     ],
 
     // ========================================
+    // LoL CHAMPION QUIZ - Adivina el campeón por detalle pixelado
+    // ========================================
+    lolChampion: [
+        {
+            id: 'ahri',
+            name: 'Ahri',
+            title: 'La Nueve Colas',
+            role: 'Mago',
+            colors: {
+                primary: '#E8B4E8',   // Pelo rosa
+                secondary: '#FFD700', // Colas doradas
+                skin: '#FFE4C4',      // Piel
+                eyes: '#00FFFF',      // Ojos cyan
+                outfit: '#8B008B',    // Ropa morada
+                accent: '#FF69B4'     // Detalles rosa
+            },
+            features: ['orejas_fox', 'colas', 'orbita', 'pelo_largo'],
+            difficulty: 'fácil'
+        },
+        {
+            id: 'jinx',
+            name: 'Jinx',
+            title: 'La Criminal Suelta',
+            role: 'Tirador',
+            colors: {
+                primary: '#00FFFF',   // Pelo azul
+                secondary: '#FF1493', // Ojos/cohetes rosa
+                skin: '#FFE4C4',
+                eyes: '#FF1493',
+                outfit: '#1A1A2E',    // Chaleco oscuro
+                accent: '#FFD700'     // Dientes/detalles
+            },
+            features: ['pelo_loco', 'cohete', 'ojos_locos', 'tatuajes'],
+            difficulty: 'fácil'
+        },
+        {
+            id: 'yasuo',
+            name: 'Yasuo',
+            title: 'El Imperdonado',
+            role: 'Asesino',
+            colors: {
+                primary: '#FFFFFF',   // Pelo blanco
+                secondary: '#FFD700', // Detalles dorados
+                skin: '#D4B896',
+                eyes: '#000000',
+                outfit: '#2D2D2D',    // Ropa oscura
+                accent: '#FF4444'     // Viento rojo
+            },
+            features: ['pelo_viento', 'espada', 'cicatriz', 'cinturon'],
+            difficulty: 'medio'
+        },
+        {
+            id: 'lux',
+            name: 'Lux',
+            title: 'La Dama de la Luminosidad',
+            role: 'Mago',
+            colors: {
+                primary: '#FFD700',   // Pelo dorado
+                secondary: '#FFFFFF', // Luz blanca
+                skin: '#FFE4C4',
+                eyes: '#00BFFF',      // Ojos azules
+                outfit: '#4169E1',    // Armadura azul
+                accent: '#FFD700'     // Luz
+            },
+            features: ['baston', 'luz', 'armadura', 'cola_caballo'],
+            difficulty: 'fácil'
+        },
+        {
+            id: 'thresh',
+            name: 'Thresh',
+            title: 'El Guardián de las Cadenas',
+            role: 'Soporte',
+            colors: {
+                primary: '#1A1A2E',   // Cuerpo oscuro
+                secondary: '#00FFFF', // Almas/cadenas cyan
+                skin: '#0D0D1A',
+                eyes: '#00FFFF',      // Ojos brillantes
+                outfit: '#2D1B1B',    // Armadura
+                accent: '#FFD700'     // Detalles
+            },
+            features: ['calavera', 'cadenas', 'lintern', 'humo'],
+            difficulty: 'medio'
+        },
+        {
+            id: 'garen',
+            name: 'Garen',
+            title: 'El Poder de Demacia',
+            role: 'Tanque',
+            colors: {
+                primary: '#C0C0C0',   // Armadura plateada
+                secondary: '#FFD700', // Detalles dorados
+                skin: '#D4B896',
+                eyes: '#0000FF',
+                outfit: '#C0C0C0',
+                accent: '#000080'     // Capa azul
+            },
+            features: ['espada_grande', 'armadura', 'capa', 'casco'],
+            difficulty: 'fácil'
+        },
+        {
+            id: 'miss_fortune',
+            name: 'Miss Fortune',
+            title: 'La Capitana de la Fortuna',
+            role: 'Tirador',
+            colors: {
+                primary: '#FF4444',   // Pelo rojo
+                secondary: '#FFD700', // Pistolas/dorados
+                skin: '#FFE4C4',
+                eyes: '#00FFFF',
+                outfit: '#8B0000',    // Ropa roja oscura
+                accent: '#000000'     // Sombrero
+            },
+            features: ['sombrero', 'pistolas', 'pelo_rojo', 'cinturon'],
+            difficulty: 'fácil'
+        },
+        {
+            id: 'zed',
+            name: 'Zed',
+            title: 'El Maestro de las Sombras',
+            role: 'Asesino',
+            colors: {
+                primary: '#1A1A1A',   // Traje negro
+                secondary: '#FF3333', // Energía roja
+                skin: '#2D2D2D',
+                eyes: '#FF3333',
+                outfit: '#1A1A1A',
+                accent: '#444444'     // Shurikens
+            },
+            features: ['mascara', 'shurikens', 'sombras', 'guantes'],
+            difficulty: 'medio'
+        },
+        {
+            id: 'jhin',
+            name: 'Jhin',
+            title: 'El Virtuoso',
+            role: 'Tirador',
+            colors: {
+                primary: '#FFFFFF',   // Máscara blanca
+                secondary: '#FFD700', // Detalles dorados
+                skin: '#1A1A1A',
+                eyes: '#FF3333',
+                outfit: '#1A1A1A',    // Traje negro
+                accent: '#FFD700'     // Arma
+            },
+            features: ['mascara', 'rifle', 'rosa', 'guantes_blancos'],
+            difficulty: 'difícil'
+        },
+        {
+            id: 'vi',
+            name: 'Vi',
+            title: 'La Defensora de Piltover',
+            role: 'Luchadora',
+            colors: {
+                primary: '#FF69B4',   // Pelo rosa
+                secondary: '#FFD700', // Guantes dorados
+                skin: '#FFE4C4',
+                eyes: '#FFD700',
+                outfit: '#1A1A2E',    // Traje oscuro
+                accent: '#00FFFF'     // Hextech
+            },
+            features: ['guantes_hextech', 'pelo_corto', 'gafas', 'tatuaje_vi'],
+            difficulty: 'medio'
+        },
+        {
+            id: 'teemo',
+            name: 'Teemo',
+            title: 'El Explorador Swift',
+            role: 'Tirador',
+            colors: {
+                primary: '#8FBC8F',   // Piel verde
+                secondary: '#FFD700', // Ojos/arma
+                skin: '#8FBC8F',
+                eyes: '#FFD700',
+                outfit: '#228B22',    // Ropa verde
+                accent: '#FF4444'     // Hongos
+            },
+            features: ['sombrero', 'pistola', 'orejas', 'hongo'],
+            difficulty: 'fácil'
+        },
+        {
+            id: 'darius',
+            name: 'Darius',
+            title: 'La Mano de Noxus',
+            role: 'Luchador',
+            colors: {
+                primary: '#8B0000',   // Armadura roja
+                secondary: '#C0C0C0', // Hacha plateada
+                skin: '#D4B896',
+                eyes: '#FF0000',
+                outfit: '#8B0000',
+                accent: '#FFD700'     // Detalles
+            },
+            features: ['hacha', 'armadura_puntiaguda', 'capa_roja', 'barba'],
+            difficulty: 'medio'
+        },
+        {
+            id: 'soraka',
+            name: 'Soraka',
+            title: 'La Hija de las Estrellas',
+            role: 'Soporte',
+            colors: {
+                primary: '#E6E6FA',   // Piel lavanda
+                secondary: '#FFD700', // Cuerno/estrellas
+                skin: '#E6E6FA',
+                eyes: '#00FFFF',
+                outfit: '#9370DB',    // Ropa púrpura
+                accent: '#FFFFFF'     // Estrellas
+            },
+            features: ['cuerno', 'baston_estrella', 'pezuñas', 'colas'],
+            difficulty: 'medio'
+        },
+        {
+            id: 'rengar',
+            name: 'Rengar',
+            title: 'El Acechador Orgulloso',
+            role: 'Asesino',
+            colors: {
+                primary: '#FFA500',   // Pelo naranja
+                secondary: '#FFFFFF', // Dientes/garra
+                skin: '#FF8C00',
+                eyes: '#FFD700',
+                outfit: '#8B4513',    // Armadura cuero
+                accent: '#FF0000'     // Sangre
+            },
+            features: ['melena', 'garra', 'cicatrices', 'orejas_gato'],
+            difficulty: 'difícil'
+        },
+        {
+            id: 'leona',
+            name: 'Leona',
+            title: 'El Solari Radiante',
+            role: 'Tanque',
+            colors: {
+                primary: '#FFD700',   // Armadura dorada
+                secondary: '#FF4444', // Sol rojo
+                skin: '#FFE4C4',
+                eyes: '#FFD700',
+                outfit: '#FFD700',
+                accent: '#FF8C00'     // Luz solar
+            },
+            features: ['escudo_solar', 'espada', 'casco', 'armadura_dorada'],
+            difficulty: 'medio'
+        }
+    ],
+
+    // ========================================
     // CATEGORÍAS CON PESOS (para aleatoriedad)
     // ========================================
     categories: [
-        { type: 'trivia', weight: 25, pool: 'trivia' },
-        { type: 'math', weight: 20, pool: 'math' },
-        { type: 'clicker', weight: 15, pool: 'clicker' },
-        { type: 'memory', weight: 15, pool: 'memory' },
-        { type: 'riddle', weight: 15, pool: 'riddles' },
-        { type: 'pattern', weight: 10, pool: 'patterns' }
+        { type: 'trivia', weight: 20, pool: 'trivia' },
+        { type: 'math', weight: 15, pool: 'math' },
+        { type: 'clicker', weight: 12, pool: 'clicker' },
+        { type: 'memory', weight: 12, pool: 'memory' },
+        { type: 'riddle', weight: 12, pool: 'riddles' },
+        { type: 'pattern', weight: 8, pool: 'patterns' },
+        { type: 'lolChampion', weight: 21, pool: 'lolChampion' }
     ],
 
     // ========================================
@@ -309,6 +556,9 @@ const ChallengesDB = {
             case 'pattern':
                 return Number(userAnswer) === challenge.answer;
                 
+            case 'lolChampion':
+                return userAnswer === challenge.answerIndex;
+                
             default:
                 return false;
         }
@@ -322,7 +572,8 @@ const ChallengesDB = {
             clicker: "Prueba de reflejos",
             memory: "Memoria visual",
             riddle: "Acertijo lateral",
-            pattern: "Secuencia numérica"
+            pattern: "Secuencia numérica",
+            lolChampion: "Quiz de League of Legends"
         };
         
         const base = descriptions[challenge.challengeType] || "Desafío desconocido";
@@ -330,6 +581,46 @@ const ChallengesDB = {
             `${base} (Fácil)`,
             `${base} (Difícil)`
         ];
+    },
+    
+    // Generar desafío LoL específico con opciones múltiples
+    generateLoLChallenge(difficulty = 'mix') {
+        const pool = this.lolChampion;
+        let filtered = pool;
+        
+        if (difficulty !== 'mix') {
+            filtered = pool.filter(c => c.difficulty === difficulty);
+            if (filtered.length === 0) filtered = pool;
+        }
+        
+        const champion = filtered[Math.floor(Math.random() * filtered.length)];
+        
+        // Generar 4 opciones (1 correcta + 3 incorrectas)
+        const otherChampions = pool.filter(c => c.id !== champion.id);
+        const shuffled = otherChampions.sort(() => 0.5 - Math.random());
+        const options = [champion.name, ...shuffled.slice(0, 3).map(c => c.name)];
+        const answerIndex = Math.floor(Math.random() * 4);
+        const finalOptions = [];
+        
+        // Insertar respuesta correcta en posición aleatoria
+        options.forEach((opt, i) => {
+            if (i === answerIndex) finalOptions.push(champion.name);
+            else finalOptions.push(shuffled.shift().name);
+        });
+        // Si la correcta no se insertó, ponerla al final
+        if (!finalOptions.includes(champion.name)) {
+            finalOptions[answerIndex] = champion.name;
+        }
+        
+        return {
+            question: `¿Quién es este campeón?`,
+            championData: champion,
+            options: finalOptions,
+            answer: answerIndex,
+            answerIndex: answerIndex,
+            challengeType: 'lolChampion',
+            category: 'League of Legends'
+        };
     }
 };
 
