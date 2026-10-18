@@ -1267,6 +1267,8 @@ const Game = {
         const imgContainer = document.getElementById('lolChampionCrop');
         if (imgContainer) imgContainer.style.display = 'none';
     },
+
+    submitChallengeAnswer() {
         if (!this.currentChallenge) return;
         
         let answer, success = false;
