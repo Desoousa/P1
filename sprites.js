@@ -532,19 +532,99 @@ const SpriteSheet = {
                 break;
 
             case 'ground':
-                // Suelo principal
-                ctx.fillStyle = '#3D2A2A';
-                ctx.fillRect(0, height - 60, width, 60);
+                // ========================================
+                // PASARELA / PLATAFORMA PRINCIPAL (estilo 16-bit)
+                // ========================================
+                const groundY = height - 60;
+                const groundH = 60;
+                const tileW = 32;
                 
-                // Textura suelo
-                ctx.fillStyle = '#4A3535';
-                for (let x = 0; x < width; x += 8) {
-                    for (let y = height - 60; y < height; y += 8) {
-                        if ((x + y) % 16 === 0) {
-                            ctx.fillRect(x, y, 4, 4);
+                // 1. SOMBRA PROFUNDA (debajo de la pasarela)
+                ctx.fillStyle = '#1A1010';
+                ctx.fillRect(0, groundY + 4, width, groundH - 4);
+                
+                // 2. BASE DE LA PASARELA (madera/piedra oscura)
+                ctx.fillStyle = '#2D1F1A';
+                ctx.fillRect(0, groundY, width, groundH);
+                
+                // 3. TABLONES / LOSAS DE LA PASARELA (patrón visible)
+                for (let x = 0; x < width; x += tileW) {
+                    // Alternar colores de tablones
+                    const isEven = Math.floor(x / tileW) % 2 === 0;
+                    ctx.fillStyle = isEven ? '#4A3728' : '#3D2A1F';
+                    ctx.fillRect(x, groundY, tileW, groundH);
+                    
+                    // Bordes entre tablones (líneas oscuras)
+                    ctx.fillStyle = '#1A0F0A';
+                    ctx.fillRect(x + tileW - 1, groundY, 2, groundH);
+                    
+                    // Textura de madera/piedra en cada tablón
+                    ctx.fillStyle = isEven ? '#5D4A35' : '#4A3528';
+                    for (let tx = 0; tx < tileW; tx += 8) {
+                        for (let ty = 0; ty < groundH; ty += 8) {
+                            if ((tx + ty + Math.floor(x/tileW)*10) % 16 === 0) {
+                                ctx.fillRect(x + tx, groundY + ty, 4, 4);
+                            }
                         }
                     }
+                    
+                    // Clavos/tornillos en las esquinas de tablones
+                    ctx.fillStyle = '#8B6B4A';
+                    ctx.fillRect(x + 2, groundY + 4, 2, 2);
+                    ctx.fillRect(x + tileW - 4, groundY + 4, 2, 2);
+                    ctx.fillRect(x + 2, groundY + groundH - 6, 2, 2);
+                    ctx.fillRect(x + tileW - 4, groundY + groundH - 6, 2, 2);
                 }
+                
+                // 4. BORDE SUPERIOR BRILLANTE (donde pisa el jugador) - MÁS VISIBLE
+                const highlightY = groundY;
+                // Línea principal dorada/marrón claro
+                const grad = ctx.createLinearGradient(0, highlightY, 0, highlightY + 3);
+                grad.addColorStop(0, '#D4A574');
+                grad.addColorStop(0.5, '#B8956A');
+                grad.addColorStop(1, '#8B7355');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, highlightY, width, 3);
+                
+                // Línea blanca muy sutil arriba del todo (edge highlight)
+                ctx.fillStyle = '#E8D5C0';
+                ctx.fillRect(0, highlightY, width, 1);
+                
+                // 5. BORDE INFERIOR (sombra del borde)
+                ctx.fillStyle = '#1A0F0A';
+                ctx.fillRect(0, groundY + groundH - 2, width, 2);
+                
+                // 6. POSTES / BARANDALES cada cierto intervalo (decoración)
+                for (let x = 16; x < width; x += 128) {
+                    // Poste vertical
+                    ctx.fillStyle = '#3D2A1F';
+                    ctx.fillRect(x, groundY - 20, 6, 24);
+                    // Capuchón del poste
+                    ctx.fillStyle = '#5D4A35';
+                    ctx.fillRect(x - 2, groundY - 22, 10, 4);
+                    // Cadena/cuerda entre postes
+                    if (x > 16) {
+                        ctx.strokeStyle = '#4A3728';
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.moveTo(x - 112, groundY - 16);
+                        ctx.quadraticCurveTo(x - 56, groundY - 24, x, groundY - 16);
+                        ctx.stroke();
+                    }
+                }
+                
+                // 7. DETALLES: Grietas, musgo, manchas aleatorias
+                ctx.fillStyle = '#3D2A1F';
+                for (let i = 0; i < 30; i++) {
+                    const rx = Math.random() * width;
+                    const ry = groundY + Math.random() * groundH;
+                    const rw = Math.random() * 6 + 2;
+                    const rh = Math.random() * 4 + 1;
+                    ctx.globalAlpha = 0.3;
+                    ctx.fillRect(rx, ry, rw, rh);
+                    ctx.globalAlpha = 1;
+                }
+                
                 break;
         }
 
